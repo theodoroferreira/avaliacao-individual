@@ -1,4 +1,4 @@
-package br.com.pb.msorder.framework.adapters.in.rest;
+package br.com.pb.msorder.framework.adapter.in.rest;
 
 import br.com.pb.msorder.application.ports.in.OrderUseCase;
 import br.com.pb.msorder.domain.dto.OrderDTO;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RequestMapping(value = "/orders")
-@RestController
+@org.springframework.web.bind.annotation.RestController
 @RequiredArgsConstructor
-public class OrderController {
+public class RestController {
 
     private final OrderUseCase orderService;
 

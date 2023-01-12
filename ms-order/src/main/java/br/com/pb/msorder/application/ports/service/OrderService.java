@@ -1,22 +1,26 @@
 package br.com.pb.msorder.application.ports.service;
 
 import br.com.pb.msorder.application.ports.in.OrderUseCase;
-import br.com.pb.msorder.application.ports.out.OrderRepositoryPortOut;
 import br.com.pb.msorder.domain.dto.OrderDTO;
 import br.com.pb.msorder.domain.dto.OrderFilterDTO;
 import br.com.pb.msorder.domain.dto.PageableDTO;
 import br.com.pb.msorder.domain.model.Order;
-import br.com.pb.msorder.framework.adapters.out.repository.OrderJpaRepository;
+import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService implements OrderUseCase {
 
-    private final OrderJpaRepository repository;
+    private final OrderRepository repository;
 
     private final ModelMapper modelMapper;
 
@@ -29,6 +33,30 @@ public class OrderService implements OrderUseCase {
 
     @Override
     public PageableDTO findAll(OrderFilterDTO orderFilter, Pageable pageable) {
-        return null;
+        var exampleMatcher = ExampleMatcher
+                .matching()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        var order = Order
+                .builder()
+                .cpf(orderFilter.getCpf())
+                .totalValue(orderFilter.getTotalValue())
+                .build();
+
+        Example<Order> example = Example.of(order, exampleMatcher);
+
+        Page<Order> orderPage = repository.findAllExample(example, pageable);
+
+        List<Order> orders = orderPage.getContent();
+
+        return PageableDTO
+                .builder()
+                .numberOfElements(orderPage.getNumberOfElements())
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .orderList(orders)
+                .build();
     }
 }

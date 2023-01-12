@@ -1,10 +1,7 @@
 package br.com.pb.msorder.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.math.BigDecimal;
@@ -15,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name = "order")
 public class Order {
 
@@ -24,10 +22,10 @@ public class Order {
     @CPF
     @Column(nullable = false)
     private String cpf;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Item> items;
     @Column(nullable = false)
     private BigDecimal totalValue;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 }

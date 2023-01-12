@@ -17,5 +17,5 @@ public class PageableDTO {
     private Integer numberOfElements;
     private Long totalElements;
     private Integer totalPages;
-    private List<OrderDTO> orderList;
+    private List<Order> orderList;
 }
