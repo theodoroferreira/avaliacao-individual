@@ -11,18 +11,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "address")
+@Table(name = "adresses")
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String street;
-    private String number;
-    private String district;
-    private String city;
-    private String state;
-    @Column(nullable = false)
-    private String cep;
 
+    private String cep;
+    private String logradouro;
+    private String complemento;
+    private String bairro;
+    private String localidade;
+    private String uf;
 }

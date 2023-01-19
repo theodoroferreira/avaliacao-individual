@@ -1,13 +1,18 @@
 package br.com.pb.msorder.application.ports.in;
 
-import br.com.pb.msorder.domain.dto.OrderDTO;
-import br.com.pb.msorder.domain.dto.OrderFilterDTO;
-import br.com.pb.msorder.domain.dto.PageableDTO;
+import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
+import br.com.pb.msorder.domain.dto.response.OrderDTO;
+import br.com.pb.msorder.domain.dto.response.PageableDTO;
 import org.springframework.data.domain.Pageable;
 
 public interface OrderUseCase {
+    OrderDTO create(OrderRequestDTO request);
 
-    OrderDTO create(OrderDTO orderDTO);
+    PageableDTO findAll(String cpf, Pageable pageable);
 
-    PageableDTO findAll(OrderFilterDTO orderFilter, Pageable pageable);
+    OrderDTO findById(Long id);
+
+    OrderDTO update(Long id, OrderRequestDTO request);
+
+    void delete(Long id);
 }

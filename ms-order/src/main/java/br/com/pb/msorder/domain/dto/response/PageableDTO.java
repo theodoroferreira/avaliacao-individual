@@ -1,12 +1,11 @@
-package br.com.pb.msorder.domain.dto;
+package br.com.pb.msorder.domain.dto.response;
 
 import br.com.pb.msorder.domain.model.Order;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
