@@ -40,12 +40,20 @@ public class OrderService implements OrderUseCase {
     }
 
     @Override
-    public PageableDTO findAll(String cpf, Pageable pageable) {
+    public PageableDTO findAll(String cpf, BigDecimal totalValue, Pageable pageable) {
         Page<Order> page;
         if (cpf == null || cpf.trim().length() == 0) {
             page = repository.findAll(pageable);
         } else {
             page = repository.findByCpf((cpf.trim()), pageable);
+            if (page.isEmpty()) {
+                throw new GenericException(HttpStatus.BAD_REQUEST, "Nenhum pedido encontrado com esse CPF.");
+            }
+        }
+        if (totalValue == null) {
+            page = repository.findAll(pageable);
+        } else {
+            page = repository.findByTotalValue(totalValue, pageable);
             if (page.isEmpty()) {
                 throw new GenericException(HttpStatus.BAD_REQUEST, "Nenhum pedido encontrado com esse CPF.");
             }
