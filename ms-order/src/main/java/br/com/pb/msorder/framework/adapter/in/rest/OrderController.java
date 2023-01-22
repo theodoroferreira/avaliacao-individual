@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RequestMapping(value = "/orders")
 @RequiredArgsConstructor
 @RestController
@@ -24,8 +26,8 @@ public class OrderController {
     }
 
     @GetMapping
-    public PageableDTO findAll(@RequestParam(required = false) String cpf, Pageable pageable) {
-        return orderService.findAll(cpf, pageable);
+    public PageableDTO findAll(@RequestParam(required = false) String cpf, @RequestParam(required = false) BigDecimal totalValue, Pageable pageable) {
+        return orderService.findAll(cpf, totalValue, pageable);
     }
 
     @GetMapping("/{id}")
