@@ -96,6 +96,8 @@
 						<exclude>**/config/**</exclude>
 						<exclude>**/domain/**</exclude>
 						<exclude>**/MsOrderApplication.*</exclude>
+						<exclude>**/ErrorResponse.*</exclude>
+						<exclude>**/GenericException.*</exclude>
 					</excludes>
 				</configuration>
 				<executions>

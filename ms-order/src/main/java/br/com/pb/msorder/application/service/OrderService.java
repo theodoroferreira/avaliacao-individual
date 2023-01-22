@@ -33,6 +33,7 @@ public class OrderService implements OrderUseCase {
         Order order = modelMapper.map(request, Order.class);
         this.validateDates(order);
         order.setAddress(getAddress(request.getAddress().getCep()));
+        this.validateCep(order);
         order.setTotalValue(calculateTotalValue(order));
         repository.save(order);
         return modelMapper.map(order, OrderDTO.class);
@@ -40,7 +41,7 @@ public class OrderService implements OrderUseCase {
 
     @Override
     public PageableDTO findAll(String cpf, Pageable pageable) {
-        Page page;
+        Page<Order> page;
         if (cpf == null || cpf.trim().length() == 0) {
             page = repository.findAll(pageable);
         } else {
@@ -120,4 +121,14 @@ public class OrderService implements OrderUseCase {
             }
         }
     }
+
+    private void validateCep(Order order) {
+        if (order.getAddress().getUf()==null) {
+            throw new GenericException(
+                    HttpStatus.BAD_REQUEST,
+                    "CEP inválido"
+            );
+        }
+    }
+
 }

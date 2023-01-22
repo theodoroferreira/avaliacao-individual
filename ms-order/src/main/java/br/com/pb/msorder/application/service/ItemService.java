@@ -3,7 +3,9 @@ package br.com.pb.msorder.application.service;
 import br.com.pb.msorder.application.ports.in.ItemUseCase;
 import br.com.pb.msorder.domain.dto.response.ItemDTO;
 import br.com.pb.msorder.domain.model.Item;
+import br.com.pb.msorder.domain.model.Order;
 import br.com.pb.msorder.framework.adapter.out.repository.ItemRepository;
+import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
 import br.com.pb.msorder.framework.exception.GenericException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -20,23 +24,56 @@ public class ItemService implements ItemUseCase {
 
     private final ItemRepository repository;
 
+    private final OrderRepository orderRepository;
+
     private final ModelMapper modelMapper;
 
     @Override
-    public ItemDTO patch(Long id, Map<String, Object> fields) {
+    public ItemDTO patch(Long id, ItemDTO request) {
         Item item = repository
             .findById(id)
             .orElseThrow(() -> new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
+        this.validateDates(item);
 
-        fields.forEach(
-            (key, value) -> {
-                Field field = ReflectionUtils.findField(Item.class, key);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, item, value);
-            }
-        );
+        if (request.getCreationDate() != null) {
+            item.setCreationDate(request.getCreationDate());
+        }
+        if (request.getExpirationDate() != null) {
+            item.setExpirationDate(request.getExpirationDate());
+        }
+        if (request.getValue() != null) {
+            item.setValue(request.getValue());
+        }
+        if (request.getDescription() != null) {
+            item.setDescription(request.getDescription());
+        }
 
         repository.save(item);
+        updateOrderTotalValue(item);
         return modelMapper.map(item, ItemDTO.class);
+    }
+
+    //nao estao funcionando pois o order ainda está null!
+    private BigDecimal calculateOrderTotalValue(Order order) {
+        List<Item> items = order.getItems();
+        return items.stream()
+                .map(Item::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private void updateOrderTotalValue(Item item) {
+        Order order = item.getOrder();
+        BigDecimal totalValue = calculateOrderTotalValue(order);
+        order.setTotalValue(totalValue);
+        orderRepository.save(order);
+    }
+
+    private void validateDates(Item item) {
+            if (item.getExpirationDate().isBefore(item.getCreationDate())) {
+                throw new GenericException(
+                        HttpStatus.BAD_REQUEST,
+                        "A data de expiração não pode ser anterior à data de criação."
+                );
+        }
     }
 }

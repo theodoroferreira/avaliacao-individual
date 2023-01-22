@@ -18,7 +18,7 @@ public class ItemController {
     private final ItemUseCase itemService;
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ItemDTO> patch(@PathVariable Long id, @RequestBody @Valid Map<String, Object> fields) {
-        return ResponseEntity.status(HttpStatus.OK).body(itemService.patch(id, fields));
+    public ResponseEntity<ItemDTO> patch(@PathVariable Long id, @RequestBody @Valid ItemDTO request) {
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.patch(id, request));
     }
 }

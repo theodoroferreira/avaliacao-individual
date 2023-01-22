@@ -1,6 +1,10 @@
 package br.com.pb.msorder.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -41,10 +45,9 @@ public class Item {
     private BigDecimal value;
 
     @NotBlank(message = "Campo descrição não deve estar em branco.")
-    @Pattern(regexp = "^([a-zA-ZãÃéÉíÍóÓêÊôÔáÁ\\s])+$", message = "Campo descrição deve conter apenas letras.")
     private String description;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_order", referencedColumnName = "id")
+    @JoinColumn(name = "id_order")
     private Order order;
 }

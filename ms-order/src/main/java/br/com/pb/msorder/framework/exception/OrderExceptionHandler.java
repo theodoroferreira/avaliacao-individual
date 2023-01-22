@@ -1,5 +1,6 @@
 package br.com.pb.msorder.framework.exception;
 
+import feign.FeignException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
@@ -48,6 +49,13 @@ public class OrderExceptionHandler extends ResponseEntityExceptionHandler {
         var error = ErrorResponse.builder().message(List.of(badRequestMessage)).build();
         return new ResponseEntity<>(error, status);
     }
+
+    @ExceptionHandler({ FeignException.BadRequest.class })
+    public ResponseEntity<Object> handleFeignException(FeignException.BadRequest ex) {
+        var error = ErrorResponse.builder().message(List.of("Campo CEP deve conter apenas 8 dígitos")).build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler({ ConstraintViolationException.class })
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {

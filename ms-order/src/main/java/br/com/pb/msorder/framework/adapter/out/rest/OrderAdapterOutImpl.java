@@ -1,21 +1,14 @@
-//package br.com.pb.msorder.framework.adapter.out.rest;
-//
-//import br.com.pb.msorder.application.ports.out.OrderPortOut;
-//import br.com.pb.msorder.domain.model.Order;
-//import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.data.domain.Example;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.Pageable;
-//import org.springframework.stereotype.Component;
-//
-//@Component
-//@RequiredArgsConstructor
-//public class OrderAdapterOutImpl implements OrderPortOut {
-//
-//    private final OrderRepository repository;
-//
-//    public Page<Order> findAllExample(Example<Order> example, Pageable pageable) {
-//        return repository.findAll(example, pageable);
-//    }
-//}
+package br.com.pb.msorder.framework.adapter.out.rest;
+
+import br.com.pb.msorder.application.ports.out.OrderPortOut;
+import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class OrderAdapterOutImpl implements OrderPortOut {
+
+    private final OrderRepository repository;
+
+}

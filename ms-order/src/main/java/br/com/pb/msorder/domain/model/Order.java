@@ -1,10 +1,11 @@
 package br.com.pb.msorder.domain.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
-import java.util.List;
 import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
