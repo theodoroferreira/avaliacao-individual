@@ -1,5 +1,6 @@
 package br.com.pb.msorder.framework.adapter.out.repository;
 
+import br.com.pb.msorder.domain.model.Item;
 import br.com.pb.msorder.domain.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByCpf(String cpf, Pageable pageable);
 
     Page<Order> findByTotalValue(BigDecimal totalValue, Pageable pageable);
+
+    Order findByItemsContains(Item item);
 }

@@ -11,12 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -53,8 +50,7 @@ public class ItemService implements ItemUseCase {
         return modelMapper.map(item, ItemDTO.class);
     }
 
-    //nao estao funcionando pois o order ainda está null!
-    private BigDecimal calculateOrderTotalValue(Order order) {
+    private BigDecimal calculateTotalValue(Order order) {
         List<Item> items = order.getItems();
         return items.stream()
                 .map(Item::getValue)
@@ -62,9 +58,8 @@ public class ItemService implements ItemUseCase {
     }
 
     private void updateOrderTotalValue(Item item) {
-        Order order = item.getOrder();
-        BigDecimal totalValue = calculateOrderTotalValue(order);
-        order.setTotalValue(totalValue);
+        Order order = orderRepository.findByItemsContains(item);
+        order.setTotalValue(calculateTotalValue(order));
         orderRepository.save(order);
     }
 

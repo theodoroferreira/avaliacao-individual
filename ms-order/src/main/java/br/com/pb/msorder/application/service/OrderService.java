@@ -31,7 +31,7 @@ public class OrderService implements OrderUseCase {
     public OrderDTO create(OrderRequestDTO request) {
         Order order = modelMapper.map(request, Order.class);
         this.validateDates(order);
-        order.setAddress(getAddress(request.getAddress().getCep()));
+        order.setAddress(getAddress(request.getAddress().getCep(), request.getAddress().getNumero()));
         this.validateCep(order);
         order.setTotalValue(calculateTotalValue(order));
         repository.save(order);
@@ -49,12 +49,13 @@ public class OrderService implements OrderUseCase {
                 throw new GenericException(HttpStatus.BAD_REQUEST, "Nenhum pedido encontrado com esse CPF.");
             }
         }
+
         if (totalValue == null) {
             page = repository.findAll(pageable);
         } else {
             page = repository.findByTotalValue(totalValue, pageable);
             if (page.isEmpty()) {
-                throw new GenericException(HttpStatus.BAD_REQUEST, "Nenhum pedido encontrado com esse CPF.");
+                throw new GenericException(HttpStatus.BAD_REQUEST, "Nenhum pedido encontrado com esse valor.");
             }
         }
 
@@ -84,7 +85,7 @@ public class OrderService implements OrderUseCase {
             .orElseThrow(() -> new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
 
         order.setCpf(request.getCpf());
-        order.setAddress(getAddress(request.getAddress().getCep()));
+        order.setAddress(getAddress(request.getAddress().getCep(), request.getAddress().getNumero()));
 
         repository.save(order);
         return modelMapper.map(order, OrderDTO.class);
@@ -92,7 +93,8 @@ public class OrderService implements OrderUseCase {
 
     @Override
     public void delete(Long id) {
-        repository.findById(id).orElseThrow(() -> new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
+        repository.findById(id).orElseThrow(() ->
+                new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
         repository.deleteById(id);
     }
 
@@ -105,12 +107,12 @@ public class OrderService implements OrderUseCase {
         return totalValue;
     }
 
-    private Address getAddress(String cep) {
+    private Address getAddress(String cep, String homeNumber) {
         Address request = cepService.findAddressByCep(cep);
         Address address = new Address();
         address.setCep(request.getCep());
         address.setLogradouro(request.getLogradouro());
-        address.setComplemento(request.getComplemento());
+        address.setNumero(homeNumber);
         address.setBairro(request.getBairro());
         address.setLocalidade(request.getLocalidade());
         address.setUf(request.getUf());

@@ -79,7 +79,7 @@ class OrderControllerTest {
     @Test
     void findAll() throws Exception {
         PageableDTO pageableDTO = new PageableDTO();
-        when(orderService.findAll(any(), any())).thenReturn(pageableDTO);
+        when(orderService.findAll(any(), any(), any())).thenReturn(pageableDTO);
         MvcResult result = mockMvc
                 .perform(
                         MockMvcRequestBuilders
@@ -153,7 +153,7 @@ class OrderControllerTest {
 
     private OrderDTO getOrderDTO() {
         return OrderDTO.builder()
-                .cpf("623.435.602-85")
+                .cpf("38946632607")
                 .items(Arrays.asList(new Item()))
                 .totalValue(BigDecimal.TEN)
                 .address(new Address())
@@ -162,7 +162,7 @@ class OrderControllerTest {
 
     private OrderRequestDTO getOrderRequestDTO() {
         return OrderRequestDTO.builder()
-                .cpf("623.435.602-85")
+                .cpf("38946632607")
                 .items(Arrays.asList(new Item()))
                 .address(new AddressRequestDTO())
                 .build();
