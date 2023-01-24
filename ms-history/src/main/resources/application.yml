@@ -1,0 +1,24 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: ms-history
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kahka.common.serialization.StringSerializer
+  data:
+    mongodb:
+      database: history_db
+      port: 27017
+      host: localhost
+
+
+topic:
+  history-order: topic_history_order
