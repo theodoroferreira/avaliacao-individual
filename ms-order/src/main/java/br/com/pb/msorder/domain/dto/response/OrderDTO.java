@@ -2,7 +2,6 @@ package br.com.pb.msorder.domain.dto.response;
 
 import br.com.pb.msorder.domain.model.Address;
 import br.com.pb.msorder.domain.model.Item;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
