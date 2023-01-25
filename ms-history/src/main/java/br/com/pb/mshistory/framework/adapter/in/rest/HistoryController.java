@@ -3,6 +3,7 @@ package br.com.pb.mshistory.framework.adapter.in.rest;
 import br.com.pb.mshistory.application.service.HistoryService;
 import br.com.pb.mshistory.domain.dto.HistoryDTO;
 import br.com.pb.mshistory.domain.dto.PageableDTO;
+import br.com.pb.mshistory.domain.model.History;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +20,7 @@ public class HistoryController {
     private final HistoryService service;
 
     @GetMapping
-    public PageableDTO getAll(@RequestParam(required = false) HistoryDTO request, Pageable pageable) {
+    public PageableDTO getAll(@RequestParam(required = false) History request, Pageable pageable) {
         return service.findAll(request, pageable);
     }
 }

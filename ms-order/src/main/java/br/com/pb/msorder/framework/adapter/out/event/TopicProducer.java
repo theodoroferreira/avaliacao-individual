@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TopicProducer {
 
-    @Value("${topic.order-history}")
+    @Value("${spring.kafka.topic.order-history}")
     private String topicOrderHistory;
 
     private final KafkaTemplate<String, String> kafkaTemplate;

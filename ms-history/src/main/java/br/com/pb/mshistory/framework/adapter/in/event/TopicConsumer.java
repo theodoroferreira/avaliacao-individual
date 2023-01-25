@@ -16,13 +16,15 @@ public class TopicConsumer {
 
     private final HistoryService service;
 
-    @KafkaListener(topics = "${topic.order-history}", groupId = "${spring.kafka.consumer.group-id}")
+    private final ObjectMapper objectMapper;
+
+    @KafkaListener(topics = "${spring.kafka.topic.order-history}", groupId = "${spring.kafka.consumer.group-id}")
     public void getOrderHistory(String orderHistory) throws JsonProcessingException {
         log.info("Mensagem Histórico {}", orderHistory);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         History history = objectMapper.readValue(orderHistory, History.class);
 
+        System.out.println(history.getOrder_id() + " " + history.getTotalValue());
         service.save(history);
         log.info("Order salvo na base com sucesso: {}", history);
     }

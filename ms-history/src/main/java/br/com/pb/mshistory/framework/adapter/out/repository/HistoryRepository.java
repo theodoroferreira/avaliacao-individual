@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface HistoryRepository extends MongoRepository<History, UUID> {
+public interface HistoryRepository extends MongoRepository<History, String> {
 
     History save(History history);
 
