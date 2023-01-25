@@ -7,11 +7,17 @@ import br.com.pb.msorder.domain.dto.response.PageableDTO;
 import br.com.pb.msorder.domain.model.Address;
 import br.com.pb.msorder.domain.model.Item;
 import br.com.pb.msorder.domain.model.Order;
+import br.com.pb.msorder.framework.adapter.out.event.TopicProducer;
+import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
 import br.com.pb.msorder.framework.exception.GenericException;
 import java.math.BigDecimal;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,14 +26,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class OrderService implements OrderUseCase {
 
     private final OrderRepository repository;
 
     private final ModelMapper modelMapper;
 
-    private final CepService cepService;
+    private final ViaCepService cepService;
 
+    @Override
     public OrderDTO create(OrderRequestDTO request) {
         Order order = modelMapper.map(request, Order.class);
         this.validateDates(order);

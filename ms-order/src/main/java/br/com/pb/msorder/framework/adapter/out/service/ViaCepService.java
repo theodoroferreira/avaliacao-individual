@@ -1,4 +1,4 @@
-package br.com.pb.msorder.application.service;
+package br.com.pb.msorder.framework.adapter.out.service;
 
 import br.com.pb.msorder.domain.model.Address;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @FeignClient(url = "https://viacep.com.br/ws/", name = "viacep")
-public interface CepService {
+public interface ViaCepService {
     @GetMapping("{cep}/json")
     Address findAddressByCep(@PathVariable("cep") String cep);
 }

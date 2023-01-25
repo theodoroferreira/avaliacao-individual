@@ -1,6 +1,6 @@
 package br.com.pb.msorder.framework.adapter.in.rest;
 
-import br.com.pb.msorder.application.service.CepService;
+import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import br.com.pb.msorder.application.service.OrderService;
 import br.com.pb.msorder.domain.dto.request.AddressRequestDTO;
 import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
@@ -49,7 +49,7 @@ class OrderControllerTest {
     private OrderService orderService;
 
     @MockBean
-    private CepService cepService;
+    private ViaCepService cepService;
 
     @Spy
     private ObjectMapper objectMapper;

@@ -4,6 +4,8 @@ import br.com.pb.msorder.application.ports.in.OrderUseCase;
 import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
 import br.com.pb.msorder.domain.dto.response.OrderDTO;
 import br.com.pb.msorder.domain.dto.response.PageableDTO;
+import br.com.pb.msorder.framework.adapter.out.event.TopicProducer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +21,6 @@ import java.math.BigDecimal;
 public class OrderController {
 
     private final OrderUseCase orderService;
-
     @PostMapping
     public ResponseEntity<OrderDTO> create(@RequestBody @Valid OrderRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.create(request));

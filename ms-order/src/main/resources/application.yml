@@ -10,6 +10,14 @@ spring:
     url: jdbc:mysql://localhost:3306/ms_order?createDatabaseIfNotExist=true&serverTimezone=UTC
     username: root
     password: root
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    topic:
+      order-history: topic_order_history
 
   jpa:
     hibernate:

@@ -4,9 +4,9 @@ import br.com.pb.msorder.domain.dto.request.AddressRequestDTO;
 import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
 import br.com.pb.msorder.domain.dto.response.OrderDTO;
 import br.com.pb.msorder.domain.dto.response.PageableDTO;
-import br.com.pb.msorder.domain.model.Address;
 import br.com.pb.msorder.domain.model.Item;
 import br.com.pb.msorder.domain.model.Order;
+import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
 import br.com.pb.msorder.framework.exception.GenericException;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class OrderServiceTest {
     private OrderRepository repository;
 
     @MockBean
-    private CepService cepService;
+    private ViaCepService cepService;
 
     @Spy
     private ModelMapper modelMapper;
