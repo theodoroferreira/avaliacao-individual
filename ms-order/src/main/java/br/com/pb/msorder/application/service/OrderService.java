@@ -3,6 +3,7 @@ package br.com.pb.msorder.application.service;
 import br.com.pb.msorder.application.ports.in.OrderUseCase;
 import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
 import br.com.pb.msorder.domain.dto.response.OrderDTO;
+import br.com.pb.msorder.domain.dto.response.OrderProducerDTO;
 import br.com.pb.msorder.domain.dto.response.PageableDTO;
 import br.com.pb.msorder.domain.model.Address;
 import br.com.pb.msorder.domain.model.Item;
@@ -35,14 +36,25 @@ public class OrderService implements OrderUseCase {
 
     private final ViaCepService cepService;
 
+    private final TopicProducer producer;
+
+    private final ObjectMapper objectMapper;
+
     @Override
-    public OrderDTO create(OrderRequestDTO request) {
+    public OrderDTO create(OrderRequestDTO request) throws JsonProcessingException {
         Order order = modelMapper.map(request, Order.class);
         this.validateDates(order);
         order.setAddress(getAddress(request.getAddress().getCep(), request.getAddress().getNumero()));
         this.validateCep(order);
         order.setTotalValue(calculateTotalValue(order));
         repository.save(order);
+        OrderProducerDTO orderProducer = modelMapper.map(order, OrderProducerDTO.class);
+        log.info("## Dados enviados pelo cliente :{}", orderProducer);
+
+        String message = objectMapper.writeValueAsString(orderProducer);
+
+        producer.sendMessage(message);
+        log.info("## Pedido retornado pela API de CEP: {}", orderProducer);
         return modelMapper.map(order, OrderDTO.class);
     }
 

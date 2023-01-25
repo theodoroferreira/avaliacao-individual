@@ -3,12 +3,13 @@ package br.com.pb.msorder.application.ports.in;
 import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
 import br.com.pb.msorder.domain.dto.response.OrderDTO;
 import br.com.pb.msorder.domain.dto.response.PageableDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 
 public interface OrderUseCase {
-    OrderDTO create(OrderRequestDTO request);
+    OrderDTO create(OrderRequestDTO request) throws JsonProcessingException;
 
     PageableDTO findAll(String cpf, BigDecimal totalValue, Pageable pageable);
 

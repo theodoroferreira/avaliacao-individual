@@ -5,6 +5,7 @@ import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
 import br.com.pb.msorder.domain.dto.response.OrderDTO;
 import br.com.pb.msorder.domain.dto.response.PageableDTO;
 import br.com.pb.msorder.framework.adapter.out.event.TopicProducer;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class OrderController {
 
     private final OrderUseCase orderService;
     @PostMapping
-    public ResponseEntity<OrderDTO> create(@RequestBody @Valid OrderRequestDTO request) {
+    public ResponseEntity<OrderDTO> create(@RequestBody @Valid OrderRequestDTO request) throws JsonProcessingException {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.create(request));
     }
 
