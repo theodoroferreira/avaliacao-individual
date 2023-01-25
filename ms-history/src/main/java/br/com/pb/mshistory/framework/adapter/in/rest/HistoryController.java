@@ -1,6 +1,5 @@
 package br.com.pb.mshistory.framework.adapter.in.rest;
 
-import br.com.pb.mshistory.application.service.HistoryOrder;
 import br.com.pb.mshistory.application.service.HistoryService;
 import br.com.pb.mshistory.domain.dto.HistoryDTO;
 import br.com.pb.mshistory.domain.dto.PageableDTO;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/history")
 public class HistoryController {

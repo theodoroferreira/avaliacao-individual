@@ -13,12 +13,22 @@ spring:
       auto-offset-reset: earliest
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kahka.common.serialization.StringSerializer
+    topic:
+      order-history: topic_order_history
+
   data:
     mongodb:
       database: history_db
       port: 27017
       host: localhost
 
-
-topic:
-  history-order: topic_history_order
+springdoc:
+  api-docs:
+    path: /api-docs
+    version: openapi_3_0
+  swagger-ui:
+    path: /swagger-ui.html
+    csrf:
+      enabled: false
+  show-actuator: true
+  default-produces-media-type: "application/json"
