@@ -12,6 +12,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OrderProducerDTO {
 
-    private Long order_id;
+    private Long orderId;
     private BigDecimal totalValue;
 }

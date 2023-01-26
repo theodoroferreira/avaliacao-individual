@@ -13,6 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class HistoryDTO {
 
-    private Long order_id;
+    private Long orderId;
     private BigDecimal totalValue;
 }

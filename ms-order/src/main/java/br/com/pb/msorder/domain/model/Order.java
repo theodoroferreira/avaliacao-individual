@@ -18,7 +18,7 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long order_id;
+    private Long orderId;
 
     @CPF(message = "CPF inválido")
     private String cpf;
