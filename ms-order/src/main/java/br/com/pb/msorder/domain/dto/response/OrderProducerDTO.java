@@ -1,7 +1,6 @@
 package br.com.pb.msorder.domain.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -1,9 +1,7 @@
-package br.com.pb.msorder.framework.exception;
+package br.com.pb.mshistory.framework.exception;
 
-import feign.FeignException;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,9 +14,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,14 +21,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class OrderExceptionHandlerTest {
+class HistoryExceptionHandlerTest {
+
+    @InjectMocks
+    private HistoryExceptionHandler exceptionHandler;
+
+    private static final String message = "test message";
 
     @Test
     void handleExceptionInternal() {
-        Exception ex = new Exception("test message");
+        Exception ex = new Exception(message);
         WebRequest request = mock(WebRequest.class);
 
-        OrderExceptionHandler handler = new OrderExceptionHandler();
+        HistoryExceptionHandler handler = new HistoryExceptionHandler();
         ResponseEntity<Object> response = handler.handleExceptionInternal(
                 ex,
                 null,
@@ -45,67 +45,61 @@ class OrderExceptionHandlerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody() instanceof ErrorResponse);
         ErrorResponse errorResponse = (ErrorResponse) response.getBody();
-        List<String> message = Collections.singletonList("test message");
-        assertEquals(message, errorResponse.getMessage());
+        assertEquals(Collections.singletonList(message), errorResponse.getMessage());
     }
 
-
     @Test
-    void handle() {
+    public void handle() {
         Exception ex1 = mock(Exception.class);
         GenericException ex2 = mock(GenericException.class);
-        when(ex2.getMessageDTO()).thenReturn("test message");
+        when(ex2.getMessageDTO()).thenReturn(message);
         when(ex2.getStatus()).thenReturn(HttpStatus.BAD_REQUEST);
 
-        OrderExceptionHandler handler = new OrderExceptionHandler();
+        HistoryExceptionHandler handler = new HistoryExceptionHandler();
         ResponseEntity<Object> response = handler.handle(ex1);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ErrorResponse);
         ErrorResponse errorResponse = (ErrorResponse) response.getBody();
-        List<String> message1 = Collections.singletonList(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertEquals(message1, errorResponse.getMessage());
+        assertEquals(Collections.singletonList(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()), errorResponse.getMessage());
 
         response = handler.handle(ex2);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody() instanceof ErrorResponse);
         errorResponse = (ErrorResponse) response.getBody();
-        List<String> message2 = Collections.singletonList("test message");
-        assertEquals(message2, errorResponse.getMessage());
+        assertEquals(Collections.singletonList(message), errorResponse.getMessage());
     }
 
     @Test
-    void handleDefault() {
-        OrderExceptionHandler handler = new OrderExceptionHandler();
+    public void handleDefault() {
+        HistoryExceptionHandler handler = new HistoryExceptionHandler();
         ResponseEntity<Object> response = handler.handleDefault();
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody() instanceof ErrorResponse);
         ErrorResponse errorResponse = (ErrorResponse) response.getBody();
-        List<String> message = Collections.singletonList(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-        assertEquals(message, errorResponse.getMessage());
+        assertEquals(Collections.singletonList(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()), errorResponse.getMessage());
     }
 
     @Test
-    void handleGenericException() {
+    public void handleGenericException() {
         GenericException ex = mock(GenericException.class);
-        when(ex.getMessageDTO()).thenReturn("test message");
+        when(ex.getMessageDTO()).thenReturn(message);
         when(ex.getStatus()).thenReturn(HttpStatus.BAD_REQUEST);
 
-        OrderExceptionHandler handler = new OrderExceptionHandler();
+        HistoryExceptionHandler handler = new HistoryExceptionHandler();
         ResponseEntity<Object> response = handler.handleGenericException(ex);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody() instanceof ErrorResponse);
         ErrorResponse errorResponse = (ErrorResponse) response.getBody();
-        List<String> message = Collections.singletonList("test message");
-        assertEquals(message, errorResponse.getMessage());
+        assertEquals(Collections.singletonList(message), errorResponse.getMessage());
     }
 
     @Test
     void handleMethodArgumentNotValid_withFieldError_returnsBadRequest() throws Exception {
-        FieldError fieldError = new FieldError("objectName", "field", "test message");
+        FieldError fieldError = new FieldError("objectName", "field", message);
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.getFieldError()).thenReturn(fieldError);
 
@@ -114,12 +108,12 @@ class OrderExceptionHandlerTest {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ServletWebRequest request = new ServletWebRequest(new MockHttpServletRequest());
 
-        OrderExceptionHandler handler = new OrderExceptionHandler();
+        HistoryExceptionHandler handler = new HistoryExceptionHandler();
         ResponseEntity<Object> response = handler.handleMethodArgumentNotValid(ex, headers, status, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse error = (ErrorResponse) response.getBody();
-        assertEquals("test message", error.getMessage().get(0));
+        assertEquals(message, error.getMessage().get(0));
     }
 
     @Test
@@ -132,41 +126,11 @@ class OrderExceptionHandlerTest {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ServletWebRequest request = new ServletWebRequest(new MockHttpServletRequest());
 
-        OrderExceptionHandler handler = new OrderExceptionHandler();
+        HistoryExceptionHandler handler = new HistoryExceptionHandler();
         ResponseEntity<Object> response = handler.handleMethodArgumentNotValid(ex, headers, status, request);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         ErrorResponse error = (ErrorResponse) response.getBody();
         assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), error.getMessage().get(0));
-    }
-
-    @Test
-    void handleFeignException() {
-        FeignException.BadRequest ex = mock(FeignException.BadRequest.class);
-
-        OrderExceptionHandler handler = new OrderExceptionHandler();
-        ResponseEntity<Object> response = handler.handleFeignException(ex);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ErrorResponse);
-        ErrorResponse errorResponse = (ErrorResponse) response.getBody();
-        assertEquals(Collections.singletonList("Campo CEP deve conter apenas 8 dígitos"), errorResponse.getMessage());
-    }
-
-    @Test
-    void handleConstraintViolation() {
-        ConstraintViolationException ex = mock(ConstraintViolationException.class);
-        Set<ConstraintViolation<?>> violations = new HashSet<>();
-        violations.add(mock(ConstraintViolation.class));
-        when(violations.iterator().next().getMessage()).thenReturn("Field cannot be null");
-        when(ex.getConstraintViolations()).thenReturn(violations);
-
-        OrderExceptionHandler handler = new OrderExceptionHandler();
-        ResponseEntity<Object> response = handler.handleConstraintViolation(ex);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody() instanceof ErrorResponse);
-        ErrorResponse errorResponse = (ErrorResponse) response.getBody();
-        assertEquals(Collections.singletonList("Field cannot be null"), errorResponse.getMessage());
     }
 }

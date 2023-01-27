@@ -19,7 +19,7 @@ public class TopicConsumer {
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "${spring.kafka.topic.order-history}", groupId = "${spring.kafka.consumer.group-id}")
-    public void getOrderHistory(String message) throws JsonProcessingException {
+    public void getTopicConsumer(String message) throws JsonProcessingException {
         log.info("Mensagem Histórico {}", message);
 
         History history = objectMapper.readValue(message, History.class);

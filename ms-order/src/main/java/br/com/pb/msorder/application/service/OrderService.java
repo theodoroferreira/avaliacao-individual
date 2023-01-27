@@ -9,12 +9,9 @@ import br.com.pb.msorder.domain.model.Address;
 import br.com.pb.msorder.domain.model.Item;
 import br.com.pb.msorder.domain.model.Order;
 import br.com.pb.msorder.framework.adapter.out.event.TopicProducer;
-import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
+import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import br.com.pb.msorder.framework.exception.GenericException;
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -82,27 +82,27 @@ public class OrderService implements OrderUseCase {
         List<Order> orders = page.getContent();
 
         return PageableDTO
-            .builder()
-            .numberOfElements(page.getNumberOfElements())
-            .totalElements(page.getTotalElements())
-            .totalPages(page.getTotalPages())
-            .orderList(orders)
-            .build();
+                .builder()
+                .numberOfElements(page.getNumberOfElements())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .orderList(orders)
+                .build();
     }
 
     @Override
     public OrderDTO findById(Long id) {
         Order order = repository
-            .findById(id)
-            .orElseThrow(() -> new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
+                .findById(id)
+                .orElseThrow(() -> new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
         return modelMapper.map(order, OrderDTO.class);
     }
 
     @Override
     public OrderDTO update(Long id, OrderRequestDTO request) {
         Order order = repository
-            .findById(id)
-            .orElseThrow(() -> new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
+                .findById(id)
+                .orElseThrow(() -> new GenericException(HttpStatus.BAD_REQUEST, "Id não encontrado!"));
 
         order.setCpf(request.getCpf());
         order.setAddress(getAddress(request.getAddress().getCep(), request.getAddress().getNumero()));
@@ -144,15 +144,15 @@ public class OrderService implements OrderUseCase {
         for (Item item : items) {
             if (item.getExpirationDate().isBefore(item.getCreationDate())) {
                 throw new GenericException(
-                    HttpStatus.BAD_REQUEST,
-                    "A data de expiração não pode ser anterior à data de criação."
+                        HttpStatus.BAD_REQUEST,
+                        "A data de expiração não pode ser anterior à data de criação."
                 );
             }
         }
     }
 
     private void validateCep(Order order) {
-        if (order.getAddress().getUf()==null) {
+        if (order.getAddress().getUf() == null) {
             throw new GenericException(
                     HttpStatus.BAD_REQUEST,
                     "CEP inválido"

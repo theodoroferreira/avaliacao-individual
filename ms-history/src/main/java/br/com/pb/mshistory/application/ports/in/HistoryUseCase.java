@@ -4,11 +4,12 @@ import br.com.pb.mshistory.domain.dto.PageableDTO;
 import br.com.pb.mshistory.domain.model.History;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface HistoryUseCase {
 
     History save(History history);
 
-    PageableDTO findAll(LocalDateTime eventDateTime, Pageable pageable);
+    PageableDTO findAll(LocalDate eventDate, Pageable pageable);
 }

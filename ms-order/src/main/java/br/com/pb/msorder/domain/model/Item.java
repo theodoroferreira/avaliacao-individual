@@ -29,7 +29,6 @@ public class Item {
     private Long id;
 
     @NotBlank(message = "Campo nome não deve estar em branco.")
-    @Pattern(regexp = "^([a-zA-ZãÃéÉíÍóÓêÊôÔáÁ\\s])+$", message = "Campo nome deve conter apenas letras.")
     private String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")

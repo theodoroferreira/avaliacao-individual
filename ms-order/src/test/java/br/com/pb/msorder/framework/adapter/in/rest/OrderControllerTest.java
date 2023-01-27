@@ -1,6 +1,5 @@
 package br.com.pb.msorder.framework.adapter.in.rest;
 
-import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import br.com.pb.msorder.application.service.OrderService;
 import br.com.pb.msorder.domain.dto.request.AddressRequestDTO;
 import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
@@ -8,6 +7,7 @@ import br.com.pb.msorder.domain.dto.response.OrderDTO;
 import br.com.pb.msorder.domain.dto.response.PageableDTO;
 import br.com.pb.msorder.domain.model.Address;
 import br.com.pb.msorder.domain.model.Item;
+import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

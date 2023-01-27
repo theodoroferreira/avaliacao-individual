@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,17 +22,17 @@ public class HistoryService implements HistoryUseCase {
 
     @Override
     public History save(History request) {
-        request.setEventDateTime(LocalDateTime.now());
+        request.setEventDate(LocalDate.now());
         return repository.save(request);
     }
 
     @Override
-    public PageableDTO findAll(LocalDateTime eventDateTime, Pageable pageable) {
+    public PageableDTO findAll(LocalDate eventDate, Pageable pageable) {
         Page<History> page;
-        if (eventDateTime == null) {
+        if (eventDate == null) {
             page = repository.findAll(pageable);
         } else {
-            page = repository.findByEventDateTime(eventDateTime, pageable);
+            page = repository.findByEventDate(eventDate, pageable);
             if (page.isEmpty()) {
                 throw new GenericException(HttpStatus.BAD_REQUEST, "Nenhum pedido encontrado com essa data.");
             }

@@ -1,0 +1,90 @@
+openapi: 3.0.1
+info:
+  title: Ms-History
+  description: O Ms History tem a responsabilidade de armazenar o histórico dos pedidos
+  termsOfService: https://example.com/terms/
+  contact:
+    name: Theodoro Ferreira
+    url: https://github.com/theodoroferreira
+    email: theogferreira@outlook.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Repository on GitHub
+  url: https://github.com/theodoroferreira/avaliacao-individual
+servers:
+  - url: http://localhost:8082/api
+    description: Base URL to access the entire application
+paths:
+  /history:
+    get:
+      tags:
+        - history-controller
+      operationId: findAll
+      parameters:
+        - name: eventDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageableDTO'
+components:
+  schemas:
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    History:
+      type: object
+      properties:
+        id:
+          type: string
+        eventDate:
+          type: string
+          format: date
+        orderId:
+          type: integer
+          format: int64
+        totalValue:
+          type: number
+    PageableDTO:
+      type: object
+      properties:
+        numberOfElements:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        historyList:
+          type: array
+          items:
+            $ref: '#/components/schemas/History'

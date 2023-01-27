@@ -4,11 +4,15 @@ import br.com.pb.msorder.domain.dto.request.AddressRequestDTO;
 import br.com.pb.msorder.domain.dto.request.OrderRequestDTO;
 import br.com.pb.msorder.domain.dto.response.OrderDTO;
 import br.com.pb.msorder.domain.dto.response.PageableDTO;
+import br.com.pb.msorder.domain.model.Address;
 import br.com.pb.msorder.domain.model.Item;
 import br.com.pb.msorder.domain.model.Order;
-import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
+import br.com.pb.msorder.framework.adapter.out.event.TopicProducer;
 import br.com.pb.msorder.framework.adapter.out.repository.OrderRepository;
+import br.com.pb.msorder.framework.adapter.out.service.ViaCepService;
 import br.com.pb.msorder.framework.exception.GenericException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,13 +20,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -42,15 +47,13 @@ class OrderServiceTest {
     @Mock
     private OrderRepository repository;
 
-    @MockBean
+    @Mock
     private ViaCepService cepService;
 
     @Spy
     private ModelMapper modelMapper;
 
-    @Test
-    void shouldCreate_AndReturnCreated() {
-    }
+    private static final Long ID = 1L;
 
     @Test
     void shouldFindAll_AndReturnSuccess() {
@@ -67,30 +70,26 @@ class OrderServiceTest {
         assertEquals(orders, result.getOrderList());
     }
 
-//    @Test
-//    void whenFindAllByCpf_ShouldReturnPageableDTO() {
-//        Pageable pageable = PageRequest.of(0, 10);
-//        List<Order> orders = Arrays.asList(new Order());
-//        Page<Order> page = new PageImpl<>(orders);
-//
-//        when(repository.findByCpf("38946632607", pageable)).thenReturn(page);
-//
-//        PageableDTO result = service.findAll("38946632607", null, pageable);
-//
-//        assertEquals(1, result.getNumberOfElements());
-//        assertEquals(1, result.getTotalElements());
-//        assertEquals(1, result.getTotalPages());
-//        assertEquals(orders, result.getOrderList());
-//    }
-
     @Test
     void findAll_InvalidCpf_ThrowsException() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Order> page = new PageImpl<>(Collections.emptyList());
+
         when(repository.findByCpf("38946632607", pageable)).thenReturn(page);
 
         assertThrows(GenericException.class, () ->
-            service.findAll("38946632607", null, pageable));
+                service.findAll("38946632607", null, pageable));
+    }
+
+    @Test
+    void findAll_InvalidTotalValue_ThrowsException() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Order> page = new PageImpl<>(Collections.emptyList());
+
+        when(repository.findByTotalValue(new BigDecimal(10), pageable)).thenReturn(page);
+
+        assertThrows(GenericException.class, () ->
+                service.findAll(null, new BigDecimal(10), pageable));
     }
 
     @Test
@@ -109,34 +108,8 @@ class OrderServiceTest {
         assertEquals(orders, result.getOrderList());
     }
 
-//    @Test
-//    void findAll_InvalidTotalValue_ThrowsException() {
-//        Pageable pageable = PageRequest.of(0, 10);
-//        List<Order> orders = Arrays.asList(new Order());
-//        Page<Order> page = new PageImpl<>(orders);
-//
-//        when(repository.findByTotalValue(new BigDecimal(10), pageable)).thenReturn(page);
-//
-//        assertThrows(GenericException.class, () ->
-//                service.findAll(null, new BigDecimal(10), pageable));
-//    }
-//
-//    @Test
-//    void findAll_CpfProvided_TotalValueNull_ReturnsCorrectPageableDTO() {
-//        Pageable pageable = PageRequest.of(0, 10);
-//        List<Order> orders = Arrays.asList(new Order());
-//        Page<Order> page = new PageImpl<>(orders);
-//        when(repository.findByCpf("38946632607", pageable)).thenReturn(page);
-//
-//        PageableDTO result = service.findAll("38946632607", null, pageable);
-//        assertEquals(1, result.getNumberOfElements());
-//        assertEquals(1, result.getTotalElements());
-//        assertEquals(1, result.getTotalPages());
-//        assertEquals(orders, result.getOrderList());
-//    }
-
     @Test
-    void findAll_TotalValueProvided_CpfNull_ReturnsCorrectPageableDTO() {
+    void findAll_totalValueProvided_cpfNull_returnsCorrectPageableDTO() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Order> orders = Arrays.asList(new Order());
         Page<Order> page = new PageImpl<>(orders);
@@ -167,51 +140,32 @@ class OrderServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(GenericException.class, () ->
-            service.findById(anyLong()));
+                service.findById(anyLong()));
     }
 
-//    @Test
-//    void shouldUpdate_And_ReturnSuccess() {
-//        Order order = new Order();
-//        Address address = new Address();
-//
-//        OrderRequestDTO request = new OrderRequestDTO();
-//
-//        when(repository.findById(anyLong())).thenReturn(Optional.of(order));
-//        when(cepService.findAddressByCep(anyString())).thenReturn(address);
-//        when(repository.save(any())).thenReturn(order);
-//
-//        OrderDTO result = service.update(anyLong(), request);
-//        assertEquals("38946632607", order.getCpf());
-//        assertEquals("98700000", order.getAddress().getCep());
-//        assertEquals("123", order.getAddress().getNumero());
-//        assertEquals(order, modelMapper.map(result, Order.class));
-//    }
+    @Test
+    void update_withValidIdAndValidRequest_shouldReturnOrderDTO() {
+        Order order = new Order();
+        when(repository.findById(ID)).thenReturn(Optional.of(order));
+
+        OrderRequestDTO request = OrderRequestDTO.builder().cpf(anyString()).address(new AddressRequestDTO("98700000", "243")).build();
+        Address address = getAddress();
+        when(cepService.findAddressByCep("98700000")).thenReturn(address);
+        when(modelMapper.map(order, OrderDTO.class)).thenReturn(new OrderDTO());
+
+        OrderDTO result = service.update(ID, request);
+
+        assertNotNull(result);
+    }
 
     @Test
-    void testUpdate_invalidId_throwsException() {
+    void update_whenInvalidId_throwsException() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         OrderRequestDTO request = new OrderRequestDTO();
         assertThrows(GenericException.class, () ->
-            service.update(anyLong(), request));
+                service.update(anyLong(), request));
     }
-
-//    @Test
-//    public void testUpdate_nullAddressFields_updatesOrderAndReturnsCorrectOrderDTO() {
-//        Long id = 1L;
-//        Order order = new Order();
-//        when(repository.findById(id)).thenReturn(Optional.of(order));
-//
-//        OrderRequestDTO request = new OrderRequestDTO();
-//        request.setCpf("12345678901");
-//        request.setAddress(null);
-//
-//        OrderDTO result = service.update(id, request);
-//        assertEquals("12345678901", order.getCpf());
-//        assertEquals(null, order.getAddress());
-//        assertEquals(order, modelMapper.map(result, Order.class));
-//    }
 
     @Test
     void delete_ValidId_ShouldDeleteOrder() {
@@ -234,8 +188,8 @@ class OrderServiceTest {
     private OrderRequestDTO getOrderRequestDTO() {
         return OrderRequestDTO.builder()
                 .cpf("38946632607")
-                .items(Arrays.asList(new Item()))
-                .address(new AddressRequestDTO())
+                .items(Arrays.asList(getItem()))
+                .address(getAddressRequestDTO())
                 .build();
     }
 
@@ -243,6 +197,28 @@ class OrderServiceTest {
         return AddressRequestDTO.builder()
                 .cep("98700000")
                 .numero("123")
+                .build();
+    }
+
+    private Order getOrder() {
+        return Order.builder()
+                .orderId(1L)
+                .build();
+    }
+
+    private Address getAddress() {
+        return Address.builder()
+                .cep("98700000")
+                .build();
+    }
+
+    private Item getItem() {
+        return Item.builder()
+                .name("Item")
+                .value(BigDecimal.valueOf(10))
+                .description("Item description")
+                .creationDate(LocalDate.of(2023, 1, 30))
+                .creationDate(LocalDate.of(2023, 2, 15))
                 .build();
     }
 
