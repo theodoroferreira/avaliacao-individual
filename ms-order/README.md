@@ -4,9 +4,9 @@
 - [Swagger - OpenAPI](https://github.com/theodoroferreira/avaliacao-individual/ms-order/src/main/resources/openapi.yaml)
 - MySQL Workbench
 
-![Cobertura de Testes](/src/main/resources/static/images/tests-ms-order.png)
+![Cobertura de Testes](./src/main/resources/static/images/tests-ms-order.png)
 
-![Postman](/src/main/resources/static/images/postman-ms-order.png)
+![Postman](./src/main/resources/static/images/postman-ms-order.png)
 
 ## Exemplo de cURL
 
