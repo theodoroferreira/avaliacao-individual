@@ -5,7 +5,6 @@
 - [MS-Order](https://github.com/theodoroferreira/avaliacao-individual/tree/main/ms-order)
 - [MS-History](https://github.com/theodoroferreira/avaliacao-individual/tree/main/ms-history)
 
-
 ### Documentação  
 
 - [Swagger - MS-Order](https://github.com/theodoroferreira/avaliacao-individual/blob/main/ms-order/src/main/resources/openapi.yaml)
@@ -15,6 +14,10 @@
 
 - [README - MS-Order](https://github.com/theodoroferreira/avaliacao-individual/blob/main/ms-order/README.md)
 - [README - MS-History](https://github.com/theodoroferreira/avaliacao-individual/blob/main/ms-history/README.md)
+
+## Nota
+
+- Os containers do docker devem ser iniciados antes da excecução dos dois microsserviços.
 
 ## Funcionalidades  
 
